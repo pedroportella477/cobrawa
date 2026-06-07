@@ -1,7 +1,7 @@
 <?php
 /**
  * COBRAWA — Cliente da API WAHA
- * Configurado para WAHA em http://179.125.50.250:3000, sessão default.
+ * Cliente WAHA configurável pelo painel do sistema.
  */
 class Waha {
     private string $server;
@@ -14,9 +14,9 @@ class Waha {
         if ($server !== '' && !preg_match('~^https?://~i', $server)) {
             $server = 'http://' . $server;
         }
-        $this->server  = rtrim($server ?: 'http://179.125.50.250:3000', '/');
+        $this->server  = rtrim($server ?: 'http://127.0.0.1:3000', '/');
         $this->session = trim((string)($cfg['sessao'] ?? 'default')) ?: 'default';
-        $this->apiKey  = trim((string)($cfg['api_key'] ?? '')) ?: 'd9e3b58c458249d88fe98454a27ee7f4';
+        $this->apiKey  = trim((string)($cfg['api_key'] ?? ''));
     }
 
     private function normalizePhone(string $chatId): string {
@@ -51,39 +51,6 @@ class Waha {
         $errNo = curl_errno($ch);
         $err  = curl_error($ch);
         curl_close($ch);
-
-        /*
-         * Diagnóstico e fallback:
-         * Em alguns servidores o PHP não consegue acessar o próprio IP público
-         * (hairpin NAT). Se falhar acessando 179.125.50.250, tenta localhost.
-         */
-        if ($errNo && preg_match('~^http://179\.125\.50\.250:3000~', $url)) {
-            $fallbackUrl = preg_replace('~^http://179\.125\.50\.250:3000~', 'http://127.0.0.1:3000', $url);
-            $ch2 = curl_init($fallbackUrl);
-            curl_setopt_array($ch2, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => $timeout,
-                CURLOPT_CONNECTTIMEOUT => 8,
-                CURLOPT_HTTPHEADER     => $headers,
-                CURLOPT_CUSTOMREQUEST  => strtoupper($method),
-            ]);
-            if (in_array(strtoupper($method), ['POST','PUT','PATCH','DELETE'], true) && !empty($body)) {
-                curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode($body, JSON_UNESCAPED_UNICODE));
-            }
-            $raw2  = curl_exec($ch2);
-            $code2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
-            $errNo2 = curl_errno($ch2);
-            $err2  = curl_error($ch2);
-            curl_close($ch2);
-
-            if (!$errNo2) {
-                $raw = $raw2;
-                $code = $code2;
-                $errNo = 0;
-                $err = '';
-                $url = $fallbackUrl;
-            }
-        }
 
         if ($errNo) {
             return ['ok' => false, 'error' => "cURL {$errNo}: {$err}", '_url' => $url, '_http_code' => 0];

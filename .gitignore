@@ -1,0 +1,12 @@
+# Ambiente local
+.env
+config/config.local.php
+
+# Uploads e sessões
+assets/uploads/*
+!assets/uploads/.gitkeep
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db

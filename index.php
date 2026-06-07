@@ -7,7 +7,7 @@ if (isset($_GET['logout'])) {
     DB::query('UPDATE usuarios SET status_operador="offline" WHERE id=?', [$user['id']]);
     logAudit($user['id'], $user['login'], 'Logout', 'Saída do sistema');
     session_destroy();
-    header('Location: ' . APP_URL . '/login.php');
+    header('Location: ' . appUrl() . '/login.php');
     exit;
 }
 
@@ -551,7 +551,7 @@ const CUR_USER = {
   nivel: "<?= $user['nivel'] ?>",
   status: "<?= $user['status_operador'] ?>"
 };
-const APP_URL = "<?= APP_URL ?>";
+const APP_URL = "<?= appUrl() ?>";
 const CSRF    = "<?= csrfToken() ?>";
 </script>
 <script src="assets/js/particles.js"></script>

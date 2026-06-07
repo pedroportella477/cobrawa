@@ -16,10 +16,10 @@ switch ($action) {
     case 'get':
         $cfg = DB::fetchOne('SELECT * FROM waha_config ORDER BY id DESC LIMIT 1');
         jsonOk($cfg ?: [
-            'servidor'=>'http://179.125.50.250:3000',
+            'servidor'=>'http://127.0.0.1:3000',
             'sessao'=>'default',
-            'api_key'=>'d9e3b58c458249d88fe98454a27ee7f4',
-            'webhook_url'=>'https://lebarone.deltatelecomti.com.br/api/webhook.php'
+            'api_key'=>'',
+            'webhook_url'=>appUrl() . '/api/webhook.php'
         ]);
 
     case 'save':
@@ -47,7 +47,7 @@ switch ($action) {
             'sessao' => trim($body['sessao'] ?? 'default') ?: 'default',
             'api_key' => trim($body['api_key'] ?? ''),
         ];
-        if (!$cfg['servidor']) jsonError('Servidor vazio. Use http://179.125.50.250:3000');
+        if (!$cfg['servidor']) jsonError('Servidor vazio. Use http://127.0.0.1:3000 quando o WAHA estiver no mesmo servidor');
         if (!$cfg['api_key']) jsonError('API Key vazia. Cole a WAHA_API_KEY dos logs do WAHA.');
         $waha = new Waha($cfg);
         $r = $waha->test();

@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 // Já logado → dashboard
 if (!empty($_SESSION['usuario_id'])) {
-    header('Location: ' . APP_URL . '/');
+    header('Location: ' . appUrl() . '/');
     exit;
 }
 
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_login'] = $u['login'];
             $_SESSION['usuario_nivel'] = $u['nivel'];
             logAudit($u['id'], $u['login'], 'Login', 'Acesso ao sistema via ' . ip());
-            header('Location: ' . APP_URL . '/');
+            header('Location: ' . appUrl() . '/');
             exit;
         }
     }

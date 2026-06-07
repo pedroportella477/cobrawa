@@ -2,13 +2,37 @@
 /**
  * COBRAWA — Bootstrap: carrega config, DB e sessão
  */
-require_once __DIR__ . '/../config/config.php';
+
+$configFile = __DIR__ . '/../config/config.php';
+if (!file_exists($configFile)) {
+    $installUrl = '/install/';
+    if (php_sapi_name() !== 'cli') {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (!str_starts_with($uri, '/install')) {
+            header('Location: ' . $installUrl);
+            exit;
+        }
+    }
+}
+if (file_exists($configFile)) {
+    require_once $configFile;
+}
 require_once __DIR__ . '/../config/db.php';
+
 
 // Valores padrão para evitar erro fatal caso config.php antigo/incompleto tenha sido gerado.
 if (!defined('SESSION_TIMEOUT')) define('SESSION_TIMEOUT', 480);
 if (!defined('MAX_LOGIN_ATTEMPTS')) define('MAX_LOGIN_ATTEMPTS', 5);
 if (!defined('APP_DEBUG')) define('APP_DEBUG', false);
+if (!defined('APP_URL')) define('APP_URL', '');
+
+function appUrl(): string {
+    $configured = trim((string)APP_URL);
+    if ($configured !== '') return rtrim($configured, '/');
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return $scheme . '://' . $host;
+}
 
 // Iniciar sessão segura
 if (session_status() === PHP_SESSION_NONE) {
@@ -34,13 +58,13 @@ if (!isset($_SESSION['last_regen']) || time() - $_SESSION['last_regen'] > 1800) 
 function auth(): array {
     if (empty($_SESSION['usuario_id'])) {
         if (isAjax()) { jsonError('Não autenticado', 401); }
-        header('Location: ' . APP_URL . '/login.php');
+        header('Location: ' . appUrl() . '/login.php');
         exit;
     }
     $u = DB::fetchOne('SELECT * FROM usuarios WHERE id=? AND ativo=1', [$_SESSION['usuario_id']]);
     if (!$u) {
         session_destroy();
-        header('Location: ' . APP_URL . '/login.php');
+        header('Location: ' . appUrl() . '/login.php');
         exit;
     }
     return $u;
@@ -75,9 +99,9 @@ function setConfig(string $chave, string $valor): void {
 
 function getWahaConfig(): array {
     return DB::fetchOne('SELECT * FROM waha_config ORDER BY id DESC LIMIT 1') ?? [
-        'servidor' => 'http://179.125.50.250:3000',
+        'servidor' => 'http://127.0.0.1:3000',
         'sessao'   => 'default',
-        'api_key'  => 'd9e3b58c458249d88fe98454a27ee7f4',
+        'api_key'  => '',
     ];
 }
 

@@ -133,9 +133,9 @@ CREATE TABLE IF NOT EXISTS `logs` (
 
 CREATE TABLE IF NOT EXISTS `waha_config` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `servidor` VARCHAR(255) NOT NULL DEFAULT 'http://179.125.50.250:3000',
+  `servidor` VARCHAR(255) NOT NULL DEFAULT 'http://127.0.0.1:3000',
   `sessao` VARCHAR(100) NOT NULL DEFAULT 'default',
-  `api_key` VARCHAR(255) NOT NULL DEFAULT 'd9e3b58c458249d88fe98454a27ee7f4',
+  `api_key` VARCHAR(255) NOT NULL DEFAULT '',
   `webhook_url` VARCHAR(255),
   `ativo` TINYINT(1) DEFAULT 1,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -156,7 +156,7 @@ INSERT IGNORE INTO `usuarios` (`login`,`senha`,`nome`,`email`,`nivel`,`setor`,`s
 ('master','$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uSc/dLyBi','Master Admin','master@empresa.com','MASTER','TI','online',1);
 
 INSERT IGNORE INTO `waha_config` (`servidor`,`sessao`,`api_key`,`webhook_url`) VALUES
-('http://179.125.50.250:3000','default','d9e3b58c458249d88fe98454a27ee7f4','https://lebarone.deltatelecomti.com.br/api/webhook.php');
+('http://127.0.0.1:3000','default','','');
 
 INSERT IGNORE INTO `msgs_prontas` (`titulo`,`categoria`,`corpo`) VALUES
 ('Cobrança Amigável','Cobrança Amigável','Olá, *{nome}*! 👋\n\nIdentificamos uma pendência no valor de *{valor}* referente ao produto *{produto}*.\n\nGostaríamos de resolver isso de forma amigável. Podemos conversar?\n\nProtocolo: {protocolo}'),

@@ -24,5 +24,5 @@ $dest    = $uploadDir . $name;
 
 if (!move_uploaded_file($file['tmp_name'], $dest)) jsonError('Falha ao salvar arquivo');
 
-$url = APP_URL . '/assets/uploads/' . $name;
+$url = appUrl() . '/assets/uploads/' . $name;
 jsonOk(['url' => $url, 'nome' => $file['name'], 'ext' => $ext]);

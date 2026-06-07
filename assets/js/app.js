@@ -655,10 +655,10 @@ async function loadLogs() {
 async function loadWahaPage() {
   const r = await api('waha_config.php?action=get');
   if (!r.ok) return;
-  sv('wc-server', r.data.servidor || 'http://179.125.50.250:3000');
+  sv('wc-server', r.data.servidor || 'http://127.0.0.1:3000');
   sv('wc-session', r.data.sessao || 'default');
-  sv('wc-key', r.data.api_key || 'd9e3b58c458249d88fe98454a27ee7f4');
-  sv('wc-webhook', r.data.webhook_url || 'https://lebarone.deltatelecomti.com.br/api/webhook.php');
+  sv('wc-key', r.data.api_key || '');
+  sv('wc-webhook', r.data.webhook_url || (APP_URL + '/api/webhook.php'));
   loadWahaStatus();
 }
 
